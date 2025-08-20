@@ -1,0 +1,29 @@
+{
+    "name": "@empcon/types",
+    "version": "1.0.0",
+    "description": "Shared TypeScript types for Employee Management System",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "clean": "rm -rf dist",
+        "prepublishOnly": "npm run clean && npm run build"
+    },
+    "keywords": [
+        "typescript",
+        "types",
+        "employee-management"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "devDependencies": {
+        "typescript": "^5.9.2"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}
