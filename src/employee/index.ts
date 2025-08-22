@@ -96,6 +96,7 @@ export interface EmployeeResponse {
   departmentId: string;
   positionId: string;
   managerId?: string;
+  sin?: string; // Included for ADMIN, MANAGER, or Employee themselves
   profilePicture?: string;
   emergencyContactName?: string;
   emergencyContactPhone?: string;
