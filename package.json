@@ -1,6 +1,6 @@
 {
   "name": "@empcon/types",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "Shared TypeScript types for Employee Management System",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,6 +20,9 @@
   ],
   "author": "jeffkim",
   "license": "MIT",
+  "dependencies": {
+    "zod": "^3.24.1"
+  },
   "devDependencies": {
     "typescript": "^5.9.2"
   },
