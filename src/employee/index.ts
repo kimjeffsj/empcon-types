@@ -60,7 +60,7 @@ export interface CreateEmployeeRequest {
   postalCode: string;
   dateOfBirth: string;
   hireDate: string;
-  payRate: number;
+  payRate?: number;
   payType: "HOURLY" | "SALARY";
   departmentId: string;
   positionId: string;
