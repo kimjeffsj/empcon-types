@@ -1,0 +1,65 @@
+name: Publish Types Package
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'types/**'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: types
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build package
+        run: npm run build
+        
+      - name: Check if version changed
+        id: check
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          NPM_VERSION=$(npm view @empcon/types version || echo "0.0.0")
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "npm=$NPM_VERSION" >> $GITHUB_OUTPUT
+          if [ "$CURRENT_VERSION" != "$NPM_VERSION" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Publish to npm
+        if: steps.check.outputs.changed == 'true'
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Create GitHub release
+        if: steps.check.outputs.changed == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.check.outputs.current }}
+          release_name: Types Package v${{ steps.check.outputs.current }}
+          body: |
+            Automated release of @empcon/types package
+            Version: ${{ steps.check.outputs.current }}
+          draft: false
+          prerelease: false
