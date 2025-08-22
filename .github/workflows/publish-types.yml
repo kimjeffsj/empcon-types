@@ -8,6 +8,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
 
     steps:
       - name: Checkout repository
@@ -46,12 +49,10 @@ jobs:
 
       - name: Create GitHub release
         if: steps.check.outputs.changed == 'true'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.check.outputs.current }}
-          release_name: Types Package v${{ steps.check.outputs.current }}
+          name: Types Package v${{ steps.check.outputs.current }}
           body: |
             Automated release of @empcon/types package
             Version: ${{ steps.check.outputs.current }}
