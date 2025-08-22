@@ -62,6 +62,7 @@ export interface CreateEmployeeRequest {
   hireDate: string;
   payRate?: number;
   payType: "HOURLY" | "SALARY";
+  role?: UserRole;
   departmentId: string;
   positionId: string;
   managerId?: string;
