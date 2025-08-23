@@ -52,8 +52,8 @@ export const updateEmployeeSchema = z.object({
 });
 
 export const employeeListQuerySchema = z.object({
-  page: z.number().int().min(1).default(1),
-  limit: z.number().int().min(1).max(100).default(10),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
   search: z.string().max(100).optional(),
   status: z.enum(["ACTIVE", "INACTIVE", "TERMINATED", "ON_LEAVE"]).optional(),
   departmentId: z.string().optional(),
