@@ -43,12 +43,12 @@ export const updateEmployeeSchema = z.object({
   payType: z.enum(["HOURLY", "SALARY"], { message: "Pay type must be HOURLY or SALARY" }).optional(),
   departmentId: z.string().min(1, "Department is required").optional(),
   positionId: z.string().min(1, "Position is required").optional(),
-  managerId: z.string().optional(),
+  managerId: z.string().nullish(),
   sin: z.string().min(9, "SIN must be 9 digits").max(11, "SIN must be 9-11 characters").optional(),
   status: z.enum(["ACTIVE", "INACTIVE", "TERMINATED", "ON_LEAVE"], { message: "Invalid status" }).optional(),
-  emergencyContactName: z.string().max(100, "Emergency contact name must be less than 100 characters").optional(),
-  emergencyContactPhone: z.string().max(15, "Emergency contact phone must be less than 15 characters").optional(),
-  notes: z.string().max(500, "Notes must be less than 500 characters").optional(),
+  emergencyContactName: z.string().max(100, "Emergency contact name must be less than 100 characters").nullish(),
+  emergencyContactPhone: z.string().max(15, "Emergency contact phone must be less than 15 characters").nullish(),
+  notes: z.string().max(500, "Notes must be less than 500 characters").nullish(),
 });
 
 export const employeeListQuerySchema = z.object({
