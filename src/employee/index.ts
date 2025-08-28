@@ -97,7 +97,9 @@ export interface EmployeeResponse {
   departmentId: string;
   positionId: string;
   managerId?: string;
-  sin?: string; // Included for ADMIN, MANAGER, or Employee themselves
+  sin?: string; // Only included via separate API endpoint
+  sinMasked?: string; // Masked SIN (xxx-xxx-123) for display
+  hasSIN?: boolean; // Indicates if SIN exists (for UI purposes)
   profilePicture?: string;
   emergencyContactName?: string;
   emergencyContactPhone?: string;
