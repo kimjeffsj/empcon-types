@@ -34,7 +34,7 @@ export interface Employee {
   notes?: string;
   createdAt: Date;
   updatedAt: Date;
-  
+
   // Relations
   user?: {
     id: string;
@@ -106,7 +106,7 @@ export interface EmployeeResponse {
   notes?: string;
   createdAt: string;
   updatedAt: string;
-  
+
   // Relations
   user?: {
     id: string;
@@ -135,15 +135,13 @@ export interface CreateDepartmentRequest {
   managerId?: string;
 }
 
-export interface UpdateDepartmentRequest extends Partial<CreateDepartmentRequest> {}
+export interface UpdateDepartmentRequest
+  extends Partial<CreateDepartmentRequest> {}
 
 export interface CreatePositionRequest {
   title: string;
   departmentId: string;
   description?: string;
-  hourlyRate?: number;
-  salaryAmount?: number;
-  isHourly: boolean;
 }
 
 export interface UpdatePositionRequest extends Partial<CreatePositionRequest> {}
