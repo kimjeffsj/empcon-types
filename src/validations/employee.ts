@@ -41,6 +41,7 @@ export const updateEmployeeSchema = z.object({
   hireDate: z.string().min(1, "Hire date is required").optional(),
   payRate: z.number().min(0, "Pay rate must be positive").max(999999, "Pay rate is too high").optional(),
   payType: z.enum(["HOURLY", "SALARY"], { message: "Pay type must be HOURLY or SALARY" }).optional(),
+  role: z.enum(["EMPLOYEE", "MANAGER"], { message: "Role must be EMPLOYEE or MANAGER" }).optional(),
   departmentId: z.string().min(1, "Department is required").optional(),
   positionId: z.string().min(1, "Position is required").optional(),
   managerId: z.string().nullish(),
