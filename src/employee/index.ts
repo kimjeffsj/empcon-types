@@ -128,25 +128,7 @@ export interface EmployeeResponse {
   };
 }
 
-// Department and Position requests
-export interface CreateDepartmentRequest {
-  name: string;
-  description?: string;
-  managerId?: string;
-}
-
-export interface UpdateDepartmentRequest
-  extends Partial<CreateDepartmentRequest> {}
-
-export interface CreatePositionRequest {
-  title: string;
-  departmentId: string;
-  description?: string;
-}
-
-export interface UpdatePositionRequest extends Partial<CreatePositionRequest> {}
-
-// List interfaces
+// Employee List interfaces
 export interface EmployeeListRequest {
   page?: number;
   limit?: number;
