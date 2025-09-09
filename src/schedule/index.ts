@@ -6,8 +6,8 @@ export type ScheduleStatus = "SCHEDULED" | "COMPLETED" | "CANCELLED" | "NO_SHOW"
 // Core Schedule Interface
 export interface Schedule extends BaseEntity {
   employeeId: string;
-  startTime: Date;
-  endTime: Date;
+  startTime: string; // ISO string from API
+  endTime: string;   // ISO string from API
   breakDuration: number; // in minutes
   position?: string;
   status: ScheduleStatus;
@@ -110,8 +110,8 @@ export interface TodayRosterResponse {
       lastName?: string;
       employeeNumber?: string;
     };
-    startTime: string;
-    endTime: string;
+    startTime: string; // ISO string from API
+    endTime: string;   // ISO string from API
     position?: string;
     status: ScheduleStatus;
     isCurrentlyWorking?: boolean; // Based on current time
@@ -129,6 +129,7 @@ export interface ScheduleApiResponse<T = Schedule> {
 }
 
 // Grace Period Integration Types (for TimeEntry)
+// Note: Uses Date objects for internal calculations, converted from API strings
 export interface ScheduleTimeInfo {
   scheduleId: string;
   scheduledStartTime: Date;
@@ -144,6 +145,7 @@ export interface GracePeriodResult {
 }
 
 // Calendar View Types
+// Note: Uses Date objects for calendar library compatibility, converted from Schedule strings
 export interface CalendarEvent {
   id: string;
   title: string;
@@ -154,6 +156,7 @@ export interface CalendarEvent {
   borderColor?: string;
 }
 
+// Frontend filtering types - uses Date objects for easier manipulation
 export interface ScheduleFilters {
   dateRange: {
     start: Date;

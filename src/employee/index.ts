@@ -19,8 +19,8 @@ export interface Employee {
   city: string;
   province: string;
   postalCode: string;
-  dateOfBirth: Date;
-  hireDate: Date;
+  dateOfBirth: string; // ISO string from API
+  hireDate: string;    // ISO string from API
   payRate: number;
   payType: "HOURLY" | "SALARY";
   status: EmployeeStatus;
@@ -32,8 +32,8 @@ export interface Employee {
   emergencyContactName?: string;
   emergencyContactPhone?: string;
   notes?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;   // ISO string from API
+  updatedAt: string;   // ISO string from API
 
   // Relations
   user?: {
