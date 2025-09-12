@@ -1,210 +1,107 @@
-import Joi from 'joi';
+import { z } from 'zod';
+
+// TimeEntry Status Enum Schema
+export const TimeEntryStatusSchema = z.enum(["CLOCKED_IN", "CLOCKED_OUT", "ADJUSTED"]);
 
 // Clock-in validation schema
-export const clockInSchema = Joi.object({
-  employeeId: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Employee ID is required',
-      'any.required': 'Employee ID is required'
-    }),
-  
-  scheduleId: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Schedule ID is required',
-      'any.required': 'Schedule ID is required - you must have a valid schedule to clock in'
-    }),
-    
-  clockInLocation: Joi.string()
-    .optional()
-    .max(255)
-    .messages({
-      'string.max': 'Clock-in location must be less than 255 characters'
-    })
+export const ClockInRequestSchema = z.object({
+  employeeId: z.string().min(1, "Employee ID is required"),
+  scheduleId: z.string().min(1, "Schedule ID is required - you must have a valid schedule to clock in"),
+  clockInLocation: z.string().max(255, "Clock-in location must be less than 255 characters").optional(),
 });
 
 // Clock-out validation schema
-export const clockOutSchema = Joi.object({
-  timeEntryId: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Time entry ID is required',
-      'any.required': 'Time entry ID is required'
-    }),
-    
-  clockOutLocation: Joi.string()
-    .optional()
-    .max(255)
-    .messages({
-      'string.max': 'Clock-out location must be less than 255 characters'
-    })
+export const ClockOutRequestSchema = z.object({
+  timeEntryId: z.string().min(1, "Time entry ID is required"),
+  clockOutLocation: z.string().max(255, "Clock-out location must be less than 255 characters").optional(),
 });
 
 // Clock status validation schema
-export const clockStatusSchema = Joi.object({
-  employeeId: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Employee ID is required',
-      'any.required': 'Employee ID is required'
-    }),
-    
-  date: Joi.string()
-    .optional()
-    .pattern(/^\d{4}-\d{2}-\d{2}$/)
-    .messages({
-      'string.pattern.base': 'Date must be in YYYY-MM-DD format'
-    })
+export const ClockStatusRequestSchema = z.object({
+  employeeId: z.string().min(1, "Employee ID is required"),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format").optional(),
 });
 
 // Get time entries validation schema
-export const getTimeEntriesSchema = Joi.object({
-  employeeId: Joi.string()
-    .optional(),
-    
-  startDate: Joi.string()
-    .optional()
-    .pattern(/^\d{4}-\d{2}-\d{2}$/)
-    .messages({
-      'string.pattern.base': 'Start date must be in YYYY-MM-DD format'
-    }),
-    
-  endDate: Joi.string()
-    .optional()
-    .pattern(/^\d{4}-\d{2}-\d{2}$/)
-    .messages({
-      'string.pattern.base': 'End date must be in YYYY-MM-DD format'
-    }),
-    
-  status: Joi.string()
-    .optional()
-    .valid('CLOCKED_IN', 'CLOCKED_OUT', 'ADJUSTED')
-    .messages({
-      'any.only': 'Status must be one of: CLOCKED_IN, CLOCKED_OUT, ADJUSTED'
-    }),
-    
-  scheduleId: Joi.string()
-    .optional(),
-    
-  page: Joi.number()
-    .integer()
-    .min(1)
-    .default(1)
-    .messages({
-      'number.min': 'Page must be at least 1',
-      'number.integer': 'Page must be an integer'
-    }),
-    
-  limit: Joi.number()
-    .integer()
-    .min(1)
-    .max(100)
-    .default(20)
-    .messages({
-      'number.min': 'Limit must be at least 1',
-      'number.max': 'Limit cannot exceed 100',
-      'number.integer': 'Limit must be an integer'
-    })
+export const GetTimeEntriesParamsSchema = z.object({
+  employeeId: z.string().optional(),
+  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Start date must be in YYYY-MM-DD format").optional(),
+  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "End date must be in YYYY-MM-DD format").optional(),
+  status: TimeEntryStatusSchema.optional(),
+  scheduleId: z.string().optional(),
+  page: z.coerce.number().int().min(1, "Page must be at least 1").optional().default(1),
+  limit: z.coerce.number().int().min(1, "Limit must be at least 1").max(100, "Limit cannot exceed 100").optional().default(20),
+}).refine((data) => {
+  if (data.startDate && data.endDate) {
+    return new Date(data.startDate) <= new Date(data.endDate);
+  }
+  return true;
+}, {
+  message: "End date must be after or equal to start date",
+  path: ["endDate"],
 });
 
 // Time adjustment validation schema (Admin/Manager only)
-export const timeAdjustmentSchema = Joi.object({
-  timeEntryId: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Time entry ID is required',
-      'any.required': 'Time entry ID is required'
-    }),
-    
-  clockInTime: Joi.string()
-    .optional()
-    .isoDate()
-    .messages({
-      'string.isoDate': 'Clock-in time must be a valid ISO date string'
-    }),
-    
-  clockOutTime: Joi.string()
-    .optional()
-    .isoDate()
-    .messages({
-      'string.isoDate': 'Clock-out time must be a valid ISO date string'
-    }),
-    
-  reason: Joi.string()
-    .required()
-    .min(10)
-    .max(500)
-    .messages({
-      'string.empty': 'Reason is required',
-      'any.required': 'Reason is required for time adjustments',
-      'string.min': 'Reason must be at least 10 characters',
-      'string.max': 'Reason must be less than 500 characters'
-    }),
-    
-  adjustedBy: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Adjusted by (user ID) is required',
-      'any.required': 'Adjusted by (user ID) is required'
-    })
-}).custom((value, helpers) => {
+export const TimeAdjustmentRequestSchema = z.object({
+  timeEntryId: z.string().min(1, "Time entry ID is required"),
+  clockInTime: z.string().datetime("Clock-in time must be a valid ISO date string").optional(),
+  clockOutTime: z.string().datetime("Clock-out time must be a valid ISO date string").optional(),
+  reason: z.string().min(10, "Reason must be at least 10 characters").max(500, "Reason must be less than 500 characters"),
+  adjustedBy: z.string().min(1, "Adjusted by (user ID) is required"),
+}).refine((data) => {
   // At least one time field must be provided
-  if (!value.clockInTime && !value.clockOutTime) {
-    return helpers.error('custom.missingTimeFields');
-  }
-  
+  return data.clockInTime || data.clockOutTime;
+}, {
+  message: "At least one time field (clockInTime or clockOutTime) must be provided",
+  path: ["clockInTime"],
+}).refine((data) => {
   // If both times are provided, clockOutTime must be after clockInTime
-  if (value.clockInTime && value.clockOutTime) {
-    const clockIn = new Date(value.clockInTime);
-    const clockOut = new Date(value.clockOutTime);
-    
-    if (clockOut <= clockIn) {
-      return helpers.error('custom.invalidTimeRange');
-    }
-    
-    // Check for reasonable shift length (max 24 hours)
-    const shiftHours = (clockOut.getTime() - clockIn.getTime()) / (1000 * 60 * 60);
-    if (shiftHours > 24) {
-      return helpers.error('custom.shiftTooLong');
-    }
+  if (data.clockInTime && data.clockOutTime) {
+    const clockIn = new Date(data.clockInTime);
+    const clockOut = new Date(data.clockOutTime);
+    return clockOut > clockIn;
   }
-  
-  return value;
-}).messages({
-  'custom.missingTimeFields': 'At least one time field (clockInTime or clockOutTime) must be provided',
-  'custom.invalidTimeRange': 'Clock-out time must be after clock-in time',
-  'custom.shiftTooLong': 'Shift cannot exceed 24 hours'
+  return true;
+}, {
+  message: "Clock-out time must be after clock-in time",
+  path: ["clockOutTime"],
+}).refine((data) => {
+  // Check for reasonable shift length (max 24 hours)
+  if (data.clockInTime && data.clockOutTime) {
+    const clockIn = new Date(data.clockInTime);
+    const clockOut = new Date(data.clockOutTime);
+    const shiftHours = (clockOut.getTime() - clockIn.getTime()) / (1000 * 60 * 60);
+    return shiftHours <= 24;
+  }
+  return true;
+}, {
+  message: "Shift cannot exceed 24 hours",
+  path: ["clockOutTime"],
 });
 
 // Today's clock status validation schema (Admin dashboard)
-export const todayClockStatusSchema = Joi.object({
-  date: Joi.string()
-    .optional()
-    .pattern(/^\d{4}-\d{2}-\d{2}$/)
-    .messages({
-      'string.pattern.base': 'Date must be in YYYY-MM-DD format'
-    })
+export const TodayClockStatusRequestSchema = z.object({
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format").optional(),
 });
 
 // Route parameter validation schemas
-export const timeEntryIdParamSchema = Joi.object({
-  id: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Time entry ID is required',
-      'any.required': 'Time entry ID is required'
-    })
+export const TimeEntryIdParamSchema = z.object({
+  id: z.string().min(1, "Time entry ID is required"),
 });
 
-export const employeeIdParamSchema = Joi.object({
-  employeeId: Joi.string()
-    .required()
-    .messages({
-      'string.empty': 'Employee ID is required',
-      'any.required': 'Employee ID is required'
-    })
+export const EmployeeIdParamSchema = z.object({
+  employeeId: z.string().min(1, "Employee ID is required"),
 });
+
+// Type exports
+export type ClockInRequestType = z.infer<typeof ClockInRequestSchema>;
+export type ClockOutRequestType = z.infer<typeof ClockOutRequestSchema>;
+export type ClockStatusRequestType = z.infer<typeof ClockStatusRequestSchema>;
+export type GetTimeEntriesParamsType = z.infer<typeof GetTimeEntriesParamsSchema>;
+export type TimeAdjustmentRequestType = z.infer<typeof TimeAdjustmentRequestSchema>;
+export type TodayClockStatusRequestType = z.infer<typeof TodayClockStatusRequestSchema>;
+export type TimeEntryIdParamType = z.infer<typeof TimeEntryIdParamSchema>;
+export type EmployeeIdParamType = z.infer<typeof EmployeeIdParamSchema>;
 
 // Common validation helpers
 export const timeClockValidationHelpers = {
