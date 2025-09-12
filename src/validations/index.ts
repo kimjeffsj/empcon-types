@@ -4,3 +4,4 @@ export * from './department';
 export * from './position';
 export * from './auth';
 export * from './schedule';
+export * from './timeclock';

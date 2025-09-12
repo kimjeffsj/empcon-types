@@ -5,4 +5,5 @@ export * from "./employee";
 export * from "./department";
 export * from "./position";
 export * from "./schedule";
+export * from "./timeclock";
 export * from "./validations";
