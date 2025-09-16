@@ -143,50 +143,6 @@ export interface TimeAdjustmentResponse {
   message: string;
 }
 
-// Today's Clock Status (Admin Dashboard)
-export interface TodayClockStatusRequest {
-  date?: string; // Optional: specific date, defaults to today
-}
-
-export interface TodayClockStatusResponse {
-  date: string;
-  summary: {
-    totalEmployeesScheduled: number;
-    currentlyClockedIn: number;
-    completedShifts: number;
-    pendingClockOuts: number;
-  };
-  employees: Array<{
-    employeeId: string;
-    employee: {
-      id: string;
-      firstName?: string;
-      lastName?: string;
-      employeeNumber?: string;
-    };
-    schedules: Array<{
-      id: string;
-      startTime: string;
-      endTime: string;
-      position?: string;
-      status: string;
-    }>;
-    clockStatus: {
-      isCurrentlyClocked: boolean;
-      currentTimeEntry?: {
-        id: string;
-        clockInTime: string;
-        scheduleId: string;
-      };
-      lastClockOut?: string;
-    };
-    summary: {
-      scheduledHours: number;
-      workedHours: number;
-      status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" | "OVERTIME";
-    };
-  }>;
-}
 
 // Payroll Rounding and Grace Period Utilities
 export interface PayrollRoundingResult {
