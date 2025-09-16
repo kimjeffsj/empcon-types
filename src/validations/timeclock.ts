@@ -40,6 +40,14 @@ export const ClockStatusRequestSchema = z.object({
     .optional(),
 });
 
+// Clock status query validation schema (for route validation)
+export const ClockStatusQuerySchema = z.object({
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
+    .optional(),
+});
+
 // Get time entries validation schema
 export const GetTimeEntriesParamsSchema = z
   .object({
@@ -164,6 +172,7 @@ export const EmployeeIdParamSchema = z.object({
 export type ClockInRequestType = z.infer<typeof ClockInRequestSchema>;
 export type ClockOutRequestType = z.infer<typeof ClockOutRequestSchema>;
 export type ClockStatusRequestType = z.infer<typeof ClockStatusRequestSchema>;
+export type ClockStatusQueryType = z.infer<typeof ClockStatusQuerySchema>;
 export type GetTimeEntriesParamsType = z.infer<
   typeof GetTimeEntriesParamsSchema
 >;
