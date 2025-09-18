@@ -13,18 +13,18 @@ export interface TimeEntry extends BaseEntity {
   clockOutLocation?: string;
   clockInIp?: string;
   clockOutIp?: string;
-  
+
   // Grace Period handling fields
   scheduledStartTime?: string; // ISO string from API
-  scheduledEndTime?: string;   // ISO string from API
-  adjustedStartTime?: string;  // ISO string from API
-  adjustedEndTime?: string;    // ISO string from API
+  scheduledEndTime?: string; // ISO string from API
+  adjustedStartTime?: string; // ISO string from API
+  adjustedEndTime?: string; // ISO string from API
   gracePeriodApplied: boolean;
-  
-  totalHours?: number;         // Decimal as number from API
-  overtimeHours?: number;      // Decimal as number from API
+
+  totalHours?: number; // Decimal as number from API
+  overtimeHours?: number; // Decimal as number from API
   status: TimeEntryStatus;
-  
+
   // Relations (optional for API responses)
   employee?: {
     id: string;
@@ -110,7 +110,7 @@ export interface ClockStatusResponse {
 export interface GetTimeEntriesParams {
   employeeId?: string;
   startDate?: string; // ISO date string
-  endDate?: string;   // ISO date string
+  endDate?: string; // ISO date string
   status?: TimeEntryStatus;
   scheduleId?: string;
   page?: number;
@@ -122,10 +122,10 @@ export interface GetTimeEntriesResponse extends PaginatedResponse<TimeEntry> {}
 // Manual Time Adjustment (Admin/Manager)
 export interface TimeAdjustmentRequest {
   timeEntryId: string;
-  clockInTime?: string;    // ISO string
-  clockOutTime?: string;   // ISO string
-  reason: string;          // Reason for manual adjustment
-  adjustedBy: string;      // Manager/Admin ID
+  clockInTime?: string; // ISO string
+  clockOutTime?: string; // ISO string
+  reason: string; // Reason for manual adjustment
+  adjustedBy: string; // Manager/Admin ID
 }
 
 export interface TimeAdjustmentResponse {
@@ -142,7 +142,6 @@ export interface TimeAdjustmentResponse {
   };
   message: string;
 }
-
 
 // Payroll Rounding and Grace Period Utilities
 export interface PayrollRoundingResult {
@@ -181,11 +180,11 @@ export interface TimeClockApiResponse<T> {
 
 // Time Clock Business Rules Constants (for frontend reference)
 export interface TimeClockRules {
-  gracePeriodMinutes: number;          // 5 minutes
-  clockInWindowMinutes: number;        // 5 minutes before schedule
-  payrollRoundingMinutes: number;      // 15 minutes
-  maxShiftHours: number;               // 24 hours
-  overtimeThresholdHours: number;      // 8 hours (configurable)
+  gracePeriodMinutes: number; // 5 minutes
+  clockInWindowMinutes: number; // 5 minutes before schedule
+  payrollRoundingMinutes: number; // 15 minutes
+  maxShiftHours: number; // 24 hours
+  overtimeThresholdHours: number; // 8 hours (configurable)
 }
 
 export const DEFAULT_TIMECLOCK_RULES: TimeClockRules = {
@@ -198,15 +197,91 @@ export const DEFAULT_TIMECLOCK_RULES: TimeClockRules = {
 
 // Error Messages (for consistent error handling)
 export const TIMECLOCK_ERROR_MESSAGES = {
-  NO_SCHEDULE: 'No schedule found for today. Cannot clock in.',
-  TOO_EARLY: 'Clock-in not allowed yet. You can clock in 5 minutes before your scheduled time.',
-  ALREADY_CLOCKED_IN: 'Already clocked in for this shift.',
-  NOT_CLOCKED_IN: 'You must clock in first before clocking out.',
-  EARLY_CLOCKOUT: 'You are clocking out early. Have you contacted your manager?',
-  INVALID_EMPLOYEE: 'Employee not found or inactive.',
-  SYSTEM_ERROR: 'System error. Please try again or contact IT support.',
-  SCHEDULE_NOT_FOUND: 'Schedule not found.',
-  TIME_ENTRY_NOT_FOUND: 'Time entry not found.',
-  INVALID_TIME_ADJUSTMENT: 'Invalid time adjustment request.',
-  UNAUTHORIZED_ADJUSTMENT: 'You do not have permission to adjust time entries.',
+  NO_SCHEDULE: "No schedule found for today. Cannot clock in.",
+  TOO_EARLY:
+    "Clock-in not allowed yet. You can clock in 5 minutes before your scheduled time.",
+  ALREADY_CLOCKED_IN: "Already clocked in for this shift.",
+  NOT_CLOCKED_IN: "You must clock in first before clocking out.",
+  EARLY_CLOCKOUT:
+    "You are clocking out early. Have you contacted your manager?",
+  INVALID_EMPLOYEE: "Employee not found or inactive.",
+  SYSTEM_ERROR: "System error. Please try again or contact IT support.",
+  SCHEDULE_NOT_FOUND: "Schedule not found.",
+  TIME_ENTRY_NOT_FOUND: "Time entry not found.",
+  INVALID_TIME_ADJUSTMENT: "Invalid time adjustment request.",
+  UNAUTHORIZED_ADJUSTMENT: "You do not have permission to adjust time entries.",
 } as const;
+
+// Dashboard & UI Response Types
+export interface EmployeeClockSummary {
+  employeeId: string;
+  employeeName: string;
+  employeeNumber?: string;
+  currentStatus:
+    | "NOT_STARTED"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "LATE"
+    | "OVERTIME";
+  statusColor: "green" | "red" | "yellow" | "blue" | "gray" | "orange";
+  clockedIn: boolean;
+  lastClockInTime?: string;
+  todaySchedules: number;
+  completedShifts: number;
+  workedHours: number;
+  scheduledHours: number;
+  isLate: boolean;
+  isOvertime: boolean;
+
+  scheduledStart?: string;
+  scheduledEnd?: string;
+  actualClockInTime?: string;
+  actualClockOutTime?: string;
+  gracePeriodApplied?: boolean;
+}
+
+export interface TodayTimeEntriesResponse extends PaginatedResponse<TimeEntry> {
+  summary?: {
+    totalEmployees: number;
+    clockedInCount: number;
+    completedCount: number;
+    lateCount: number;
+    overtimeCount: number;
+  };
+}
+
+// Status Color Mapping
+export const EMPLOYEE_STATUS_COLORS = {
+  NOT_STARTED: "gray",
+  IN_PROGRESS: "green",
+  COMPLETED: "blue",
+  LATE: "red",
+  OVERTIME: "orange",
+} as const;
+
+export const TIME_ENTRY_STATUS_COLORS = {
+  CLOCKED_IN: "green",
+  CLOCKED_OUT: "blue",
+  ADJUSTED: "yellow",
+} as const;
+
+export const CLOCK_STATUS_COLORS = {
+  NOT_CLOCKED: "gray",
+  CLOCKED_IN: "green",
+  ON_BREAK: "yellow",
+  CLOCKED_OUT: "blue",
+  LATE: "red",
+  OVERTIME: "orange",
+} as const;
+
+// Color Type
+export type StatusColor =
+  | "green"
+  | "red"
+  | "yellow"
+  | "blue"
+  | "gray"
+  | "orange";
+export type EmployeeStatusType = keyof typeof EMPLOYEE_STATUS_COLORS;
+export type TimeEntryStatusColor = keyof typeof TIME_ENTRY_STATUS_COLORS;
+export type ClockStatusType = keyof typeof CLOCK_STATUS_COLORS;
