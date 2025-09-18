@@ -1,6 +1,6 @@
 {
   "name": "@empcon/types",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "description": "Shared TypeScript types for Employee Management System",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
