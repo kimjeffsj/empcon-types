@@ -6,4 +6,5 @@ export * from "./department";
 export * from "./position";
 export * from "./schedule";
 export * from "./timeclock";
+export * from "./payroll";
 export * from "./validations";

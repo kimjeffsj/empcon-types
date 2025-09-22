@@ -1,5 +1,25 @@
 import { BaseEntity, Status, UserRole } from "../common";
 
+// Database Enums (from Prisma schema)
+export type PayType = "HOURLY" | "SALARY";
+
+export type OvertimeStatus = "PENDING" | "APPROVED" | "DENIED" | "EXPIRED";
+
+export type PayPeriodStatus = "OPEN" | "PROCESSING" | "COMPLETED" | "PAID";
+
+export type LeaveStatus = "PENDING" | "APPROVED" | "DENIED" | "CANCELLED";
+
+export type NotificationType =
+  | "OVERTIME_REQUEST"
+  | "OVERTIME_APPROVED"
+  | "OVERTIME_DENIED"
+  | "LEAVE_REQUEST"
+  | "LEAVE_APPROVED"
+  | "LEAVE_DENIED"
+  | "SCHEDULE_CHANGE"
+  | "PAYROLL_READY"
+  | "SYSTEM_ALERT";
+
 export interface User extends BaseEntity {
   email: string;
   passwordHash: string;
@@ -28,7 +48,7 @@ export interface EmployeeProfile extends BaseEntity {
   dob: Date;
   hireDate: Date;
   payRate: number;
-  payType: "HOURLY" | "SALARY";
+  payType: PayType;
   departmentId: string;
   positionId: string;
   status: Status;
