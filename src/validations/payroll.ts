@@ -60,3 +60,15 @@ export const PayrollSummaryQuerySchema = z.object({
   year: z.coerce.number().int().min(2020).max(2050).optional(),
   employeeId: z.string().cuid().optional(),
 });
+
+// Excel Report Schemas
+export const GenerateExcelReportSchema = z.object({
+  payPeriodId: z.string().cuid(),
+  format: z.enum(["excel", "pdf"]).default("excel").optional(),
+});
+
+// Email Integration Schemas
+export const SendToAccountantSchema = z.object({
+  payPeriodId: z.string().cuid(),
+  accountantEmail: z.string().email().optional(),
+});
