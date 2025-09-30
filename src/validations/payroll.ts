@@ -72,3 +72,11 @@ export const SendToAccountantSchema = z.object({
   payPeriodId: z.string().cuid(),
   accountantEmail: z.string().email().optional(),
 });
+
+// ============= PAYSLIP FILE MANAGEMENT TYPES =============
+
+export interface BulkUploadPayslipFilesResponse {
+  success: number;
+  failed: number;
+  errors: string[];
+}
