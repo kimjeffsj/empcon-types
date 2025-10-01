@@ -3,11 +3,11 @@ export interface Payslip {
   id: string;
   employeeId: string;
   payPeriodId: string;
-  regularHours: number;
-  overtimeHours: number;
-  grossPay: number;
-  deductions: number;
-  netPay: number;
+  regularHours: number | null;
+  overtimeHours: number | null;
+  grossPay: number | null;
+  deductions: number | null;
+  netPay: number | null;
   filePath?: string;
   createdAt: string;
   updatedAt: string;
