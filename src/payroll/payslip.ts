@@ -75,6 +75,7 @@ export interface GetPayslipsResponse {
 }
 
 export interface PayslipSummary {
+  id: string;
   employeeId: string;
   employeeName: string;
   employeeNumber?: string;
@@ -85,4 +86,5 @@ export interface PayslipSummary {
   deductions: number;
   netPay: number;
   payPeriod: string;
+  filePath?: string;
 }
