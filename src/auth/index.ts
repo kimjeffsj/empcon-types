@@ -15,6 +15,7 @@ export interface LoginResponse {
     firstName: string;
     lastName: string;
   };
+  passwordResetRequired?: boolean;
 }
 
 export interface TokenPayload {
